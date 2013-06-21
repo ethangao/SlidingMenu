@@ -86,7 +86,7 @@ public class SlidingMenu extends RelativeLayout {
 		/**
 		 * On open.
 		 */
-		public void onOpen();
+		public void onOpen(int position);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class SlidingMenu extends RelativeLayout {
 	 */
 	public SlidingMenu(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		
+
 		LayoutParams behindParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		mViewBehind = new CustomViewBehind(context);
 		addView(mViewBehind, behindParams);
@@ -210,18 +210,21 @@ public class SlidingMenu extends RelativeLayout {
 		mViewAbove.setCustomViewBehind(mViewBehind);
 		mViewBehind.setCustomViewAbove(mViewAbove);
 		mViewAbove.setOnPageChangeListener(new OnPageChangeListener() {
-			public static final int POSITION_OPEN = 0;
-			public static final int POSITION_CLOSE = 1;
+			public static final int POSITION_LEFT_MENU = 0;
+			public static final int POSITION_CONTENT = 1;
+			public static final int POSITION_RIGHT_MENU = 2;
 
 			public void onPageScrolled(int position, float positionOffset,
 					int positionOffsetPixels) { }
 
 			public void onPageSelected(int position) {
-				if (position == POSITION_OPEN && mOpenListener != null) {
-					mOpenListener.onOpen();
-				} else if (position == POSITION_CLOSE && mCloseListener != null) {
-					mCloseListener.onClose();
-				}
+			    if (position == POSITION_LEFT_MENU && mOpenListener != null) {
+			        mOpenListener.onOpen(position);
+			    } else if (position == POSITION_RIGHT_MENU && mOpenListener != null) {
+			        mOpenListener.onOpen(position);
+			    } else if (position == POSITION_CONTENT && mCloseListener != null) {
+			        mCloseListener.onClose();
+			    }
 			}
 		});
 
@@ -238,7 +241,7 @@ public class SlidingMenu extends RelativeLayout {
 		}
 		int viewBehind = ta.getResourceId(R.styleable.SlidingMenu_viewBehind, -1);
 		if (viewBehind != -1) {
-			setMenu(viewBehind); 
+			setMenu(viewBehind);
 		} else {
 			setMenu(new FrameLayout(context));
 		}
@@ -279,7 +282,7 @@ public class SlidingMenu extends RelativeLayout {
 
 	/**
 	 * Attaches the SlidingMenu to an entire Activity
-	 * 
+	 *
 	 * @param activity the Activity
 	 * @param slideStyle either SLIDING_CONTENT or SLIDING_WINDOW
 	 */
@@ -289,7 +292,7 @@ public class SlidingMenu extends RelativeLayout {
 
 	/**
 	 * Attaches the SlidingMenu to an entire Activity
-	 * 
+	 *
 	 * @param activity the Activity
 	 * @param slideStyle either SLIDING_CONTENT or SLIDING_WINDOW
 	 * @param actionbarOverlay whether or not the ActionBar is overlaid
@@ -463,7 +466,7 @@ public class SlidingMenu extends RelativeLayout {
 			setSlidingEnabled(false);
 			mViewAbove.setCustomViewBehind(null);
 			mViewAbove.setCurrentItem(1);
-			//			mViewBehind.setCurrentItem(0);	
+			//			mViewBehind.setCurrentItem(0);
 		} else {
 			mViewAbove.setCurrentItem(1);
 			//			mViewBehind.setCurrentItem(1);
@@ -550,7 +553,7 @@ public class SlidingMenu extends RelativeLayout {
 	public boolean isMenuShowing() {
 		return mViewAbove.getCurrentItem() == 0 || mViewAbove.getCurrentItem() == 2;
 	}
-	
+
 	/**
 	 * Checks if is the behind view showing.
 	 *
@@ -655,7 +658,7 @@ public class SlidingMenu extends RelativeLayout {
 	public float getBehindScrollScale() {
 		return mViewBehind.getScrollScale();
 	}
-	
+
 	/**
 	 * Gets the touch mode margin threshold
 	 * @return the touch mode margin threshold
@@ -663,7 +666,7 @@ public class SlidingMenu extends RelativeLayout {
 	public int getTouchmodeMarginThreshold() {
 		return mViewBehind.getMarginThreshold();
 	}
-	
+
 	/**
 	 * Set the touch mode margin threshold
 	 * @param touchmodeMarginThreshold
@@ -981,7 +984,7 @@ public class SlidingMenu extends RelativeLayout {
 		}
 		return true;
 	}
-	
+
 	private Handler mHandler = new Handler();
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
